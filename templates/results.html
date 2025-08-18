@@ -1,0 +1,272 @@
+{% extends "base.html" %}
+
+{% block title %}Analysis Results - {{ repo_info.owner }}/{{ repo_info.name }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <!-- Repository Header -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h2 class="card-title mb-0">
+                            <i data-feather="github" class="me-2"></i>
+                            <a href="{{ repo_info.url }}" target="_blank" class="text-decoration-none">
+                                {{ repo_info.owner }}/{{ repo_info.name }}
+                            </a>
+                        </h2>
+                    </div>
+                    <div class="col-md-4 text-md-end">
+                        <a href="{{ url_for('index') }}" class="btn btn-secondary">
+                            <i data-feather="arrow-left" class="me-1"></i>
+                            Analyze Another Repository
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p class="mb-0">
+                            <i data-feather="file-text" class="me-1"></i>
+                            <strong>{{ issues|length }}</strong> issues analyzed
+                        </p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <p class="mb-0">
+                            <i data-feather="layers" class="me-1"></i>
+                            Page {{ pagination.current_page }} of results
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Issues List -->
+        {% if issues %}
+            {% for issue in issues %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h5 class="mb-0">
+                                <span class="badge bg-{% if issue.state == 'open' %}success{% else %}secondary{% endif %} me-2">
+                                    #{{ issue.number }}
+                                </span>
+                                <a href="{{ issue.html_url }}" target="_blank" class="text-decoration-none">
+                                    {{ issue.title }}
+                                </a>
+                            </h5>
+                        </div>
+                        <div class="col-md-4 text-md-end">
+                            <small class="text-muted">
+                                <i data-feather="user" class="me-1"></i>
+                                {{ issue.user }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- AI Summary -->
+                    <div class="alert alert-primary">
+                        <div class="d-flex align-items-start">
+                            <i data-feather="cpu" class="me-2 mt-1 text-primary"></i>
+                            <div>
+                                <strong>AI Summary:</strong>
+                                <p class="mb-0 mt-1">{{ issue.summary }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Issue Metadata -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <small class="text-muted">
+                                <i data-feather="calendar" class="me-1"></i>
+                                Created: {{ issue.created_at[:10] }}
+                            </small>
+                        </div>
+                        <div class="col-md-6 text-md-end">
+                            <small class="text-muted">
+                                <i data-feather="clock" class="me-1"></i>
+                                Updated: {{ issue.updated_at[:10] }}
+                            </small>
+                        </div>
+                    </div>
+
+                    <!-- Labels -->
+                    {% if issue.labels %}
+                    <div class="mb-3">
+                        <i data-feather="tag" class="me-1"></i>
+                        {% for label in issue.labels %}
+                            <span class="badge bg-info me-1">{{ label }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Show/Hide Original Content -->
+                    <div class="collapse" id="originalContent{{ issue.number }}">
+                        <div class="border-top pt-3 mt-3">
+                            <h6>
+                                <i data-feather="file-text" class="me-1"></i>
+                                Original Issue Content:
+                            </h6>
+                            <div class="bg-secondary p-3 rounded">
+                                <pre class="mb-0 text-wrap">{{ issue.original_body }}</pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-end">
+                        <button 
+                            class="btn btn-sm btn-outline-secondary" 
+                            type="button" 
+                            data-bs-toggle="collapse" 
+                            data-bs-target="#originalContent{{ issue.number }}"
+                        >
+                            <i data-feather="eye" class="me-1"></i>
+                            Toggle Original Content
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <!-- No Issues Found -->
+            <div class="card">
+                <div class="card-body text-center py-5">
+                    <i data-feather="inbox" style="width: 64px; height: 64px;" class="text-muted mb-3"></i>
+                    <h4 class="text-muted">No Issues Found</h4>
+                    <p class="text-muted">
+                        This repository doesn't have any issues, or they might be private.
+                        Try checking the repository settings or analyzing a different repository.
+                    </p>
+                    <a href="{{ url_for('index') }}" class="btn btn-primary">
+                        <i data-feather="search" class="me-1"></i>
+                        Try Another Repository
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- Pagination -->
+        {% if pagination.has_previous or pagination.has_next %}
+        <div class="card">
+            <div class="card-body">
+                <nav>
+                    <ul class="pagination justify-content-center mb-0">
+                        {% if pagination.has_previous %}
+                        <li class="page-item">
+                            <form method="POST" action="{{ url_for('analyze_repository') }}" class="d-inline">
+                                <input type="hidden" name="repo_url" value="{{ repo_info.url }}">
+                                <input type="hidden" name="page" value="{{ pagination.current_page - 1 }}">
+                                <input type="hidden" name="per_page" value="{{ pagination.per_page }}">
+                                <button type="submit" class="btn btn-link page-link">
+                                    <i data-feather="chevron-left" class="me-1"></i>
+                                    Previous
+                                </button>
+                            </form>
+                        </li>
+                        {% endif %}
+                        
+                        <li class="page-item active">
+                            <span class="page-link">
+                                Page {{ pagination.current_page }}
+                            </span>
+                        </li>
+                        
+                        {% if pagination.has_next %}
+                        <li class="page-item">
+                            <form method="POST" action="{{ url_for('analyze_repository') }}" class="d-inline">
+                                <input type="hidden" name="repo_url" value="{{ repo_info.url }}">
+                                <input type="hidden" name="page" value="{{ pagination.current_page + 1 }}">
+                                <input type="hidden" name="per_page" value="{{ pagination.per_page }}">
+                                <button type="submit" class="btn btn-link page-link">
+                                    Next
+                                    <i data-feather="chevron-right" class="ms-1"></i>
+                                </button>
+                            </form>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Export Options -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i data-feather="download" class="me-2"></i>
+                    Export Results
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p class="text-muted mb-3">
+                            Export the analysis results for further processing or sharing.
+                        </p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <button onclick="exportToJSON()" class="btn btn-outline-primary me-2">
+                            <i data-feather="file-text" class="me-1"></i>
+                            Export JSON
+                        </button>
+                        <button onclick="window.print()" class="btn btn-outline-secondary">
+                            <i data-feather="printer" class="me-1"></i>
+                            Print Report
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function exportToJSON() {
+        const data = {
+            repository: {
+                owner: '{{ repo_info.owner }}',
+                name: '{{ repo_info.name }}',
+                url: '{{ repo_info.url }}'
+            },
+            issues: [
+                {% for issue in issues %}
+                {
+                    number: {{ issue.number }},
+                    title: {{ issue.title|tojson }},
+                    summary: {{ issue.summary|tojson }},
+                    state: '{{ issue.state }}',
+                    labels: {{ issue.labels|tojson }},
+                    created_at: '{{ issue.created_at }}',
+                    updated_at: '{{ issue.updated_at }}',
+                    html_url: '{{ issue.html_url }}',
+                    user: '{{ issue.user }}'
+                }{% if not loop.last %},{% endif %}
+                {% endfor %}
+            ],
+            pagination: {
+                current_page: {{ pagination.current_page }},
+                per_page: {{ pagination.per_page }}
+            },
+            export_timestamp: new Date().toISOString()
+        };
+        
+        const dataStr = JSON.stringify(data, null, 2);
+        const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+        
+        const exportFileDefaultName = `github-issues-${data.repository.owner}-${data.repository.name}-page-${data.pagination.current_page}.json`;
+        
+        const linkElement = document.createElement('a');
+        linkElement.setAttribute('href', dataUri);
+        linkElement.setAttribute('download', exportFileDefaultName);
+        linkElement.click();
+    }
+</script>
+{% endblock %}

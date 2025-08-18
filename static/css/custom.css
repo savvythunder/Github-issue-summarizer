@@ -1,0 +1,189 @@
+/* Custom styles for GitHub Issue Summarizer */
+
+/* Loading states */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Code blocks */
+pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 0.875rem;
+}
+
+/* Issue cards */
+.card {
+    transition: box-shadow 0.15s ease-in-out;
+}
+
+.card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Badge styling */
+.badge {
+    font-size: 0.75rem;
+}
+
+/* Pagination buttons */
+.page-link {
+    border: none;
+    color: var(--bs-primary);
+    background-color: transparent;
+}
+
+.page-link:hover {
+    background-color: var(--bs-primary-bg-subtle);
+    color: var(--bs-primary);
+}
+
+.page-item.active .page-link {
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);
+    color: var(--bs-white);
+}
+
+/* Alert customizations */
+.alert-primary {
+    border-left: 4px solid var(--bs-primary);
+}
+
+/* Form enhancements */
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.25);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .display-4 {
+        font-size: 2rem;
+    }
+    
+    .card-header .row {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .text-md-end {
+        text-align: start !important;
+    }
+}
+
+/* Print styles */
+@media print {
+    .navbar,
+    .btn,
+    footer,
+    .pagination,
+    .alert-dismissible .btn-close {
+        display: none !important;
+    }
+    
+    .card {
+        border: 1px solid #dee2e6 !important;
+        break-inside: avoid;
+        margin-bottom: 1rem;
+    }
+    
+    .collapse {
+        display: block !important;
+        height: auto !important;
+        visibility: visible !important;
+    }
+    
+    body {
+        background: white !important;
+        color: black !important;
+    }
+    
+    .card,
+    .alert {
+        background: white !important;
+        color: black !important;
+    }
+}
+
+/* Dark theme specific adjustments */
+[data-bs-theme=dark] .bg-secondary {
+    background-color: var(--bs-gray-800) !important;
+}
+
+[data-bs-theme=dark] pre {
+    color: var(--bs-gray-100);
+}
+
+/* Feather icon sizing */
+.feather {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    stroke-width: 2;
+    fill: none;
+}
+
+/* Loading spinner */
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+}
+
+/* URL input validation */
+.form-control:invalid {
+    border-color: var(--bs-danger);
+}
+
+.form-control:invalid:focus {
+    border-color: var(--bs-danger);
+    box-shadow: 0 0 0 0.2rem rgba(var(--bs-danger-rgb), 0.25);
+}
+
+/* Card title links */
+.card-title a {
+    color: inherit;
+}
+
+.card-title a:hover {
+    color: var(--bs-primary);
+}
+
+/* Issue state badges */
+.badge.bg-success {
+    background-color: var(--bs-success) !important;
+}
+
+.badge.bg-secondary {
+    background-color: var(--bs-gray-600) !important;
+}
+
+/* Export section */
+.card .btn-outline-primary:hover {
+    color: var(--bs-white);
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);
+}
+
+.card .btn-outline-secondary:hover {
+    color: var(--bs-white);
+    background-color: var(--bs-secondary);
+    border-color: var(--bs-secondary);
+}
+
+/* Smooth transitions */
+.btn,
+.card,
+.form-control,
+.form-select {
+    transition: all 0.15s ease-in-out;
+}
+
+/* Focus visible improvements */
+.btn:focus-visible,
+.form-control:focus-visible,
+.form-select:focus-visible {
+    outline: 2px solid var(--bs-primary);
+    outline-offset: 2px;
+}

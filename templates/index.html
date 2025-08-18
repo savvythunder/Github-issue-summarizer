@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+
+{% block title %}GitHub Issue Summarizer - Analyze Repository Issues{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <!-- Hero Section -->
+        <div class="text-center mb-5">
+            <h1 class="display-4 mb-3">
+                <i data-feather="zap" class="text-primary"></i>
+                GitHub Issue Summarizer
+            </h1>
+            <p class="lead text-muted">
+                Analyze and summarize GitHub repository issues using AI-powered natural language processing.
+                Get quick insights into your project's issues with intelligent summaries.
+            </p>
+        </div>
+
+        <!-- Main Form -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title mb-0">
+                    <i data-feather="search" class="me-2"></i>
+                    Analyze Repository Issues
+                </h3>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('analyze_repository') }}" id="analyzeForm">
+                    <div class="mb-4">
+                        <label for="repo_url" class="form-label">
+                            <i data-feather="github" class="me-1"></i>
+                            GitHub Repository URL
+                        </label>
+                        <input 
+                            type="url" 
+                            class="form-control form-control-lg" 
+                            id="repo_url" 
+                            name="repo_url" 
+                            placeholder="https://github.com/owner/repository" 
+                            required
+                            pattern="https://github\.com/[^/]+/[^/]+"
+                        >
+                        <div class="form-text">
+                            Enter a valid GitHub repository URL (e.g., https://github.com/microsoft/vscode)
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label for="per_page" class="form-label">
+                                <i data-feather="layers" class="me-1"></i>
+                                Issues per Page
+                            </label>
+                            <select class="form-select" id="per_page" name="per_page">
+                                <option value="5">5 issues</option>
+                                <option value="10" selected>10 issues</option>
+                                <option value="25">25 issues</option>
+                                <option value="50">50 issues</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="page" class="form-label">
+                                <i data-feather="file-text" class="me-1"></i>
+                                Page Number
+                            </label>
+                            <input 
+                                type="number" 
+                                class="form-control" 
+                                id="page" 
+                                name="page" 
+                                value="1" 
+                                min="1"
+                                max="100"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                            <i data-feather="play-circle" class="me-2"></i>
+                            <span id="submitText">Analyze Issues</span>
+                            <span id="loadingSpinner" class="d-none">
+                                <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                Processing...
+                            </span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="row mt-5">
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i data-feather="cpu" class="text-primary mb-3" style="width: 48px; height: 48px;"></i>
+                        <h5 class="card-title">AI-Powered Summarization</h5>
+                        <p class="card-text">
+                            Uses state-of-the-art Hugging Face transformers to generate intelligent summaries of GitHub issues.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i data-feather="zap" class="text-success mb-3" style="width: 48px; height: 48px;"></i>
+                        <h5 class="card-title">Fast & Efficient</h5>
+                        <p class="card-text">
+                            Optimized caching and batch processing ensure quick responses and minimal API calls.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i data-feather="shield" class="text-info mb-3" style="width: 48px; height: 48px;"></i>
+                        <h5 class="card-title">Production Ready</h5>
+                        <p class="card-text">
+                            Built with robust error handling, rate limiting, and comprehensive API documentation.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- API Documentation -->
+        <div class="card mt-5">
+            <div class="card-header">
+                <h4 class="card-title mb-0">
+                    <i data-feather="code" class="me-2"></i>
+                    API Documentation
+                </h4>
+            </div>
+            <div class="card-body">
+                <p class="mb-3">
+                    Use our RESTful API to integrate issue summarization into your applications:
+                </p>
+                
+                <h6 class="fw-bold">POST /api/analyze</h6>
+                <div class="bg-secondary p-3 rounded mb-3">
+                    <code>
+                        curl -X POST -H "Content-Type: application/json" \<br>
+                        &nbsp;&nbsp;-d '{"repo_url": "https://github.com/owner/repo", "per_page": 10}' \<br>
+                        &nbsp;&nbsp;{{ request.host_url }}api/analyze
+                    </code>
+                </div>
+
+                <h6 class="fw-bold">GET /api/health</h6>
+                <p class="text-muted mb-3">Check the health status of all services.</p>
+
+                <div class="alert alert-info">
+                    <i data-feather="info" class="me-2"></i>
+                    <strong>Rate Limits:</strong> The API respects GitHub's rate limiting. 
+                    Consider using authentication tokens for higher limits.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.getElementById('analyzeForm').addEventListener('submit', function(e) {
+        const submitBtn = document.getElementById('submitBtn');
+        const submitText = document.getElementById('submitText');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        
+        // Show loading state
+        submitBtn.disabled = true;
+        submitText.classList.add('d-none');
+        loadingSpinner.classList.remove('d-none');
+    });
+
+    // URL validation
+    document.getElementById('repo_url').addEventListener('input', function(e) {
+        const url = e.target.value;
+        const isValid = url.match(/^https:\/\/github\.com\/[^\/]+\/[^\/]+\/?$/);
+        
+        if (url && !isValid) {
+            e.target.setCustomValidity('Please enter a valid GitHub repository URL');
+        } else {
+            e.target.setCustomValidity('');
+        }
+    });
+</script>
+{% endblock %}
