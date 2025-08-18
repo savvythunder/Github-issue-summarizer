@@ -51,3 +51,11 @@ The application can be configured using environment variables:
 ## License
 
 This project is open source and available under the MIT License.
+
+---
+## Images 
+![Screenshot_18-8-2025_194958_db922807-bf41-47b7-88fe-5d55aa308e90-00-2t9r0s34hr2wo janeway replit dev](https://github.com/user-attachments/assets/aeea4f83-b3a1-4865-a97b-607aa6f14dbd)
+
+
+![Screenshot_18-8-2025_195036_db922807-bf41-47b7-88fe-5d55aa308e90-00-2t9r0s34hr2wo janeway replit dev](https://github.com/user-attachments/assets/0ed2deda-f46a-45d6-b729-3e2d7aea7bca)
+
